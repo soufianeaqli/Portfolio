@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 
 interface AnimatedTitleProps {
   text: string;
@@ -20,7 +20,7 @@ export default function AnimatedTitle({ text, className = "", highlightText, hig
     return false;
   };
 
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -30,7 +30,7 @@ export default function AnimatedTitle({ text, className = "", highlightText, hig
     },
   };
 
-  const wordVariants = {
+  const wordVariants: Variants = {
     hidden: { opacity: 0, y: 40, rotateX: -40 },
     visible: {
       opacity: 1,
