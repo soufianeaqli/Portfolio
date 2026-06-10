@@ -17,13 +17,13 @@ export default function About() {
 
   const experienceData = [
     {
-      year: "2023 - Présent",
+      year: "2025 - 2026",
       title: "Licence Pro. Génie Informatique",
       company: "École High-Tech, Rabat",
       description: "Approfondissement des concepts avancés en ingénierie logicielle et développement Full Stack."
     },
     {
-      year: "2021 - 2023",
+      year: "2023 - 2025",
       title: "Technicien Spécialisé Dev Digital",
       company: "OFPPT ISTAG, Meknès",
       description: "Formation intensive en développement web Full Stack, maîtrise de React.js et Laravel."
@@ -32,7 +32,7 @@ export default function About() {
       year: "Projets & Stages",
       title: "Développeur Full Stack",
       company: "Divers",
-      description: "Plus de 10 projets réalisés incluant de la gestion RH, réservation de terrains sportifs et API complexes."
+      description: "Plus de 5 projets réalisés incluant de la gestion RH, réservation de terrains sportifs et API complexes."
     }
   ];
 
@@ -40,9 +40,9 @@ export default function About() {
     <section id="about" className="py-24 relative z-10 px-8 bg-gradient-to-t from-black via-black/95 to-black">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <AnimatedTitle 
-            text="À Propos" 
-            highlightText="Propos" 
+          <AnimatedTitle
+            text="À Propos"
+            highlightText="Propos"
             className="text-4xl md:text-5xl font-bold mb-6"
           />
           <div className="w-24 h-1 bg-gradient-to-r from-red-600 to-transparent mx-auto rounded-full" />
@@ -69,29 +69,29 @@ export default function About() {
               className="w-full aspect-square md:aspect-auto md:h-[600px] rounded-[2rem] overflow-hidden relative group border border-red-500/30 bg-black/50 backdrop-blur-md shadow-[0_0_50px_rgba(220,38,38,0.2)] hover:shadow-[0_0_80px_rgba(220,38,38,0.5)] z-10"
             >
               <div className="absolute inset-0 bg-gradient-to-t from-red-900/60 via-transparent to-red-500/20 opacity-60 group-hover:opacity-100 transition-opacity duration-700 z-10 pointer-events-none mix-blend-overlay" />
-              <Image 
-                src="/profile.jpeg" 
-                alt="Soufiane Aqli Profile" 
+              <Image
+                src="/profile.jpeg"
+                alt="Soufiane Aqli Profile"
                 width={600}
                 height={800}
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out opacity-90 group-hover:opacity-100"
               />
               {/* Scanning laser line effect on hover */}
-              <motion.div 
+              <motion.div
                 className="absolute left-0 right-0 h-1 bg-red-400 shadow-[0_0_20px_rgba(248,113,113,1)] opacity-0 group-hover:opacity-100 z-20 pointer-events-none"
                 animate={{ top: ["0%", "100%", "0%"] }}
                 transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
               />
             </Tilt>
-            
+
             {/* Pulsing Background Orbs */}
-            <motion.div 
-              className="absolute -bottom-10 -right-10 w-64 h-64 bg-red-600/30 blur-[80px] rounded-full z-0 pointer-events-none" 
+            <motion.div
+              className="absolute -bottom-10 -right-10 w-64 h-64 bg-red-600/30 blur-[80px] rounded-full z-0 pointer-events-none"
               animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }}
               transition={{ repeat: Infinity, duration: 4 }}
             />
-            <motion.div 
-              className="absolute -top-10 -left-10 w-48 h-48 bg-red-800/40 blur-[60px] rounded-full z-0 pointer-events-none" 
+            <motion.div
+              className="absolute -top-10 -left-10 w-48 h-48 bg-red-800/40 blur-[60px] rounded-full z-0 pointer-events-none"
               animate={{ scale: [1, 1.2, 1], opacity: [0.2, 0.8, 0.2] }}
               transition={{ repeat: Infinity, duration: 5, delay: 1 }}
             />
@@ -109,7 +109,7 @@ export default function About() {
                 Développeur Full Stack Créatif
               </h3>
               <p className="text-gray-400 text-lg leading-relaxed">
-                Salut ! Je suis Soufiane Aqli, un Développeur Full Stack passionné, actuellement étudiant en Licence Professionnelle en Génie Informatique à l'École High-Tech de Rabat. 
+                Salut ! Je suis Soufiane Aqli, un Développeur Full Stack passionné, actuellement étudiant en Licence Professionnelle en Génie Informatique à l'École High-Tech de Rabat.
                 Titulaire d'un diplôme de Technicien Spécialisé en Développement Digital de l'OFPPT, je combine une solide base théorique avec une expérience pratique acquise lors de projets et de stages.
               </p>
             </motion.div>
@@ -117,7 +117,7 @@ export default function About() {
             {/* Timeline Section */}
             <div ref={timelineRef} className="relative pl-6 md:pl-8 border-l border-white/10 space-y-12">
               {/* Animated Progress Line */}
-              <motion.div 
+              <motion.div
                 className="absolute top-0 bottom-0 left-[-1px] w-[2px] bg-gradient-to-b from-red-500 to-red-800 origin-top"
                 style={{ scaleY: timelineScaleY }}
               />
@@ -133,7 +133,7 @@ export default function About() {
                 >
                   {/* Timeline dot */}
                   <div className="absolute -left-[30px] md:-left-[38px] top-1 w-4 h-4 rounded-full bg-black border-2 border-red-500 shadow-[0_0_10px_rgba(239,68,68,0.8)]" />
-                  
+
                   <div className="bg-white/5 border border-white/10 rounded-2xl p-6 backdrop-blur-sm hover:border-red-500/30 transition-colors shadow-lg">
                     <span className="text-red-500 font-bold mb-2 block">{exp.year}</span>
                     <h4 className="text-xl font-bold text-white mb-1">{exp.title}</h4>
@@ -143,7 +143,7 @@ export default function About() {
                 </motion.div>
               ))}
             </div>
-            
+
           </div>
         </div>
       </div>
