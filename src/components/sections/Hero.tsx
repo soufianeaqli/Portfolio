@@ -166,10 +166,9 @@ export default function Hero() {
           </div>
 
           <motion.div 
-            variants={{
-              hidden: { opacity: 0, y: 20 },
-              visible: { opacity: 1, y: 0 }
-            }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8, duration: 0.6 }}
             className="flex flex-wrap items-center justify-center md:justify-start gap-6"
           >
             <button
