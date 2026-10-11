@@ -1,6 +1,5 @@
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import CustomCursor from "@/components/ui/CustomCursor";
 
 import Hero from "@/components/sections/Hero";
 import About from "@/components/sections/About";
@@ -13,7 +12,6 @@ import GlobalSceneWrapper from "@/components/canvas/GlobalSceneWrapper";
 export default function Home() {
   return (
     <main className="min-h-screen bg-black text-white relative flex flex-col selection:bg-red-500/30 selection:text-white">
-      <CustomCursor />
       <GlobalSceneWrapper />
       
       <Navbar />

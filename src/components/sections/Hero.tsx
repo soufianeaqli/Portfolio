@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { motion } from "framer-motion";
-import { Mail, Eye } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Mail, Eye, MessageCircle } from "lucide-react";
 import Image from "next/image";
 import Tilt from "react-parallax-tilt";
 import gsap from "gsap";
@@ -12,25 +12,26 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-export default function Hero() {
+const CONTACT_EMAIL = "aqlisoufiane364@gmail.com";
+const WHATSAPP_NUMBER = "212679224411";
+
+const DYNAMIC_TEXTS = [
+  "développeur web Full Stack",
+  "diplômé en Développement Digital OFPPT",
+  "expert React.js & Laravel",
+  "passionné par les technologies modernes",
+  "développeur créatif",
+];
+
+// Isolated so its frequent re-renders don't affect the Hero animations
+function Typewriter() {
   const [displayText, setDisplayText] = useState("");
   const [textIndex, setTextIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
-  const heroRef = useRef<HTMLElement>(null);
-  const textContainerRef = useRef<HTMLDivElement>(null);
-  const imageContainerRef = useRef<HTMLDivElement>(null);
-  
-  const dynamicTexts = [
-    "développeur web Full Stack",
-    "diplômé en Développement Digital OFPPT",
-    "expert React.js & Laravel",
-    "passionné par les technologies modernes",
-    "développeur créatif"
-  ];
 
   useEffect(() => {
     let timeout: NodeJS.Timeout;
-    const currentFullText = dynamicTexts[textIndex];
+    const currentFullText = DYNAMIC_TEXTS[textIndex];
 
     const handleTyping = () => {
       if (!isDeleting) {
@@ -43,7 +44,7 @@ export default function Hero() {
       } else {
         if (displayText === "") {
           setIsDeleting(false);
-          setTextIndex((prev) => (prev + 1) % dynamicTexts.length);
+          setTextIndex((prev) => (prev + 1) % DYNAMIC_TEXTS.length);
           timeout = setTimeout(handleTyping, 500);
         } else {
           setDisplayText(currentFullText.slice(0, displayText.length - 1));
@@ -54,28 +55,53 @@ export default function Hero() {
 
     timeout = setTimeout(handleTyping, 100);
     return () => clearTimeout(timeout);
-  }, [displayText, isDeleting, textIndex, dynamicTexts]);
+  }, [displayText, isDeleting, textIndex]);
 
+  return (
+    <span className="flex items-center">
+      <span className="text-white">{displayText}</span>
+      <motion.span
+        animate={{ opacity: [1, 0] }}
+        transition={{ repeat: Infinity, duration: 0.8 }}
+        className="w-1 h-5 bg-red-500 ml-2 shadow-[0_0_10px_#f00]"
+      />
+    </span>
+  );
+}
+
+export default function Hero() {
+  const [contactOpen, setContactOpen] = useState(false);
+  const heroRef = useRef<HTMLElement>(null);
+  const textContainerRef = useRef<HTMLDivElement>(null);
+  const imageContainerRef = useRef<HTMLDivElement>(null);
+  const contactRef = useRef<HTMLDivElement>(null);
+
+  // Close contact menu on outside click / Escape
+  useEffect(() => {
+    if (!contactOpen) return;
+    const onClick = (e: MouseEvent) => {
+      if (contactRef.current && !contactRef.current.contains(e.target as Node)) {
+        setContactOpen(false);
+      }
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setContactOpen(false);
+    };
+    document.addEventListener("mousedown", onClick);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onClick);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [contactOpen]);
+  
   // GSAP Scroll Parallax
   useEffect(() => {
     if (!heroRef.current || !textContainerRef.current || !imageContainerRef.current) return;
 
-    // Different speeds for parallax
+    // Subtle parallax on text only — image/buttons stay fully visible
     gsap.to(textContainerRef.current, {
-      y: 150,
-      ease: "none",
-      scrollTrigger: {
-        trigger: heroRef.current,
-        start: "top top",
-        end: "bottom top",
-        scrub: true,
-      }
-    });
-
-    gsap.to(imageContainerRef.current, {
-      y: 300,
-      opacity: 0,
-      rotate: 5,
+      y: 60,
       ease: "none",
       scrollTrigger: {
         trigger: heroRef.current,
@@ -91,7 +117,7 @@ export default function Hero() {
   }, []);
 
   return (
-    <section ref={heroRef} id="home" className="min-h-screen flex items-center justify-center relative pt-20 overflow-hidden">
+    <section ref={heroRef} id="home" className="min-h-screen flex items-center justify-center relative pt-20">
       <div className="flex flex-col md:flex-row items-center justify-between w-full max-w-7xl mx-auto px-8 z-10 gap-12">
         
         {/* Left Content */}
@@ -114,7 +140,7 @@ export default function Hero() {
                 hidden: { opacity: 0, y: 20 },
                 visible: { opacity: 1, y: 0 }
               }}
-              className="text-red-500 font-mono font-bold tracking-widest uppercase mb-4"
+              className="text-red-500 font-mono font-bold tracking-widest uppercase text-xs md:text-sm mb-4"
             >
               Bienvenue sur mon Portfolio
             </motion.p>
@@ -124,7 +150,7 @@ export default function Hero() {
                 hidden: { opacity: 0, x: -50 },
                 visible: { opacity: 1, x: 0 }
               }}
-              className="text-5xl md:text-8xl font-black text-white mb-4 leading-tight"
+              className="text-4xl md:text-6xl font-black text-white mb-4 leading-tight"
             >
               Salut, <br />
               <span className="text-white">Je suis </span>
@@ -143,7 +169,7 @@ export default function Hero() {
                 hidden: { opacity: 0, scale: 0.8 },
                 visible: { opacity: 1, scale: 1 }
               }}
-              className="text-2xl md:text-4xl font-bold text-gray-200 mb-8"
+              className="text-lg md:text-2xl font-bold text-gray-200 mb-8"
             >
               Développeur Full Stack Expert
             </motion.h2>
@@ -153,51 +179,18 @@ export default function Hero() {
                 hidden: { opacity: 0 },
                 visible: { opacity: 1 }
               }}
-              className="h-12 flex items-center justify-center md:justify-start text-lg md:text-2xl font-medium text-gray-400 bg-white/5 backdrop-blur-sm px-6 py-8 rounded-2xl border border-white/10 w-fit mx-auto md:mx-0 shadow-2xl"
+              className="h-11 flex items-center justify-center md:justify-start text-sm md:text-lg font-medium text-gray-400 bg-white/5 backdrop-blur-sm px-5 py-6 rounded-2xl border border-white/10 w-fit mx-auto md:mx-0 shadow-2xl"
             >
-              <span className="text-red-500 font-mono mr-4">~/root:</span>
-              <span className="text-white">{displayText}</span>
-              <motion.span
-                animate={{ opacity: [1, 0] }}
-                transition={{ repeat: Infinity, duration: 0.8 }}
-                className="w-1 h-6 bg-red-500 ml-2 shadow-[0_0_10px_#f00]"
-              />
+              <span className="text-red-500 font-mono mr-3">~/root:</span>
+              <Typewriter />
             </motion.div>
           </div>
-
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 0.6 }}
-            className="flex flex-wrap items-center justify-center md:justify-start gap-6"
-          >
-            <button
-              onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
-              className="group relative px-10 py-5 bg-red-600 text-white rounded-full font-bold text-lg overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(220,38,38,0.4)] md:cursor-none"
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-red-800 group-hover:scale-110 transition-transform duration-500" />
-              <span className="relative z-10 flex items-center gap-3">
-                <Mail size={22} />
-                Me Contacter
-              </span>
-            </button>
-            
-            <a
-              href="/cv-image.png"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group px-10 py-5 bg-white/5 border border-white/10 text-white rounded-full font-bold text-lg backdrop-blur-md hover:bg-white/10 hover:border-red-500/50 transition-all hover:scale-105 active:scale-95 shadow-2xl flex items-center gap-3 md:cursor-none"
-            >
-              <Eye size={22} className="group-hover:scale-110 transition-transform" />
-              Voir CV
-            </a>
-          </motion.div>
         </motion.div>
 
         {/* Right Content - Modern Profile Frame */}
         <motion.div 
           ref={imageContainerRef}
-          className="flex-1 flex justify-center items-center relative"
+          className="flex-1 flex flex-col justify-center items-center relative gap-8"
           initial={{ opacity: 0, scale: 0.5, rotate: 15 }}
           animate={{ opacity: 1, scale: 1, rotate: 0 }}
           transition={{ duration: 1, type: "spring", bounce: 0.4 }}
@@ -209,7 +202,7 @@ export default function Hero() {
             transitionSpeed={1500}
             scale={1.02}
             gyroscope={true}
-            className="relative w-72 h-72 md:w-[500px] md:h-[500px]"
+            className="relative w-64 h-64 md:w-[420px] md:h-[420px]"
           >
             {/* Visual background layers */}
             <motion.div 
@@ -252,6 +245,72 @@ export default function Hero() {
               transition={{ repeat: Infinity, duration: 20, ease: "linear" }}
             />
           </Tilt>
+
+          {/* CTA Buttons */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.9, duration: 0.6 }}
+            className="relative z-20 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 w-full max-w-xs sm:max-w-sm"
+          >
+            <div ref={contactRef} className="relative w-full sm:w-auto">
+              <AnimatePresence>
+                {contactOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                    transition={{ duration: 0.2, type: "spring", bounce: 0.3 }}
+                    className="absolute bottom-full mb-3 left-0 right-0 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:w-60 z-30 bg-black/90 backdrop-blur-xl border border-white/10 rounded-2xl p-2 shadow-[0_10px_40px_rgba(220,38,38,0.25)]"
+                  >
+                    <a
+                      href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Bonjour Soufiane, je vous contacte via votre portfolio.")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 px-4 py-3 rounded-xl text-white hover:bg-green-500/15 hover:text-green-400 transition-colors md:cursor-none"
+                    >
+                      <span className="w-9 h-9 rounded-full bg-green-500/20 border border-green-500/30 flex items-center justify-center text-green-400">
+                        <MessageCircle size={18} />
+                      </span>
+                      <span className="font-medium">WhatsApp</span>
+                    </a>
+                    <a
+                      href={`https://mail.google.com/mail/?view=cm&fs=1&to=${CONTACT_EMAIL}&su=${encodeURIComponent("Contact depuis le portfolio")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 px-4 py-3 rounded-xl text-white hover:bg-red-500/15 hover:text-red-400 transition-colors md:cursor-none"
+                    >
+                      <span className="w-9 h-9 rounded-full bg-red-500/20 border border-red-500/30 flex items-center justify-center text-red-400">
+                        <Mail size={18} />
+                      </span>
+                      <span className="font-medium">Gmail</span>
+                    </a>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <button
+                onClick={() => setContactOpen((prev) => !prev)}
+                className="group relative w-full sm:w-auto px-6 py-3 md:px-7 md:py-3.5 bg-red-600 text-white rounded-full font-bold text-sm md:text-base overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(220,38,38,0.4)] md:cursor-none"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-red-800 group-hover:scale-110 transition-transform duration-500" />
+                <span className="relative z-10 flex items-center justify-center gap-2.5">
+                  <Mail size={18} />
+                  Me Contacter
+                </span>
+              </button>
+            </div>
+
+            <a
+              href="/cv-image.png"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group w-full sm:w-auto px-6 py-3 md:px-7 md:py-3.5 bg-white/5 border border-white/10 text-white rounded-full font-bold text-sm md:text-base backdrop-blur-md hover:bg-white/10 hover:border-red-500/50 transition-all hover:scale-105 active:scale-95 shadow-2xl flex items-center justify-center gap-2.5 md:cursor-none"
+            >
+              <Eye size={18} className="group-hover:scale-110 transition-transform" />
+              Voir CV
+            </a>
+          </motion.div>
         </motion.div>
         
       </div>
