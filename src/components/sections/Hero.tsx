@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mail, Eye, MessageCircle } from "lucide-react";
+import { Mail, Eye, MessageCircle, Download, X } from "lucide-react";
 import Image from "next/image";
 import Tilt from "react-parallax-tilt";
 import gsap from "gsap";
@@ -71,6 +71,7 @@ function Typewriter() {
 
 export default function Hero() {
   const [contactOpen, setContactOpen] = useState(false);
+  const [cvOpen, setCvOpen] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
   const textContainerRef = useRef<HTMLDivElement>(null);
   const imageContainerRef = useRef<HTMLDivElement>(null);
@@ -95,6 +96,20 @@ export default function Hero() {
     };
   }, [contactOpen]);
   
+  useEffect(() => {
+    if (!cvOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setCvOpen(false);
+    };
+    document.body.style.overflow = "hidden";
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [cvOpen]);
+
   // GSAP Scroll Parallax
   useEffect(() => {
     if (!heroRef.current || !textContainerRef.current || !imageContainerRef.current) return;
@@ -289,31 +304,97 @@ export default function Hero() {
                 )}
               </AnimatePresence>
 
-              <button
+              <motion.button
+                type="button"
                 onClick={() => setContactOpen((prev) => !prev)}
-                className="group relative w-full sm:w-auto px-6 py-3 md:px-7 md:py-3.5 bg-red-600 text-white rounded-full font-bold text-sm md:text-base overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(220,38,38,0.4)] md:cursor-none"
+                whileHover={{ y: -2, scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                aria-expanded={contactOpen}
+                aria-haspopup="true"
+                className="group relative w-full sm:w-auto px-6 py-3 md:px-7 md:py-3.5 bg-red-600 text-white rounded-full font-bold text-sm md:text-base overflow-hidden shadow-[0_0_30px_rgba(220,38,38,0.4)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-red-300 md:cursor-none"
               >
                 <div className="absolute inset-0 bg-gradient-to-r from-red-500 to-red-800 group-hover:scale-110 transition-transform duration-500" />
                 <span className="relative z-10 flex items-center justify-center gap-2.5">
                   <Mail size={18} />
                   Me Contacter
                 </span>
-              </button>
+              </motion.button>
             </div>
 
-            <a
-              href="/cv-image.png"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group w-full sm:w-auto px-6 py-3 md:px-7 md:py-3.5 bg-white/5 border border-white/10 text-white rounded-full font-bold text-sm md:text-base backdrop-blur-md hover:bg-white/10 hover:border-red-500/50 transition-all hover:scale-105 active:scale-95 shadow-2xl flex items-center justify-center gap-2.5 md:cursor-none"
+            <motion.button
+              type="button"
+              onClick={() => setCvOpen(true)}
+              whileHover={{ y: -2, scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}
+              className="group w-full sm:w-auto px-6 py-3 md:px-7 md:py-3.5 bg-white/5 border border-white/10 text-white rounded-full font-bold text-sm md:text-base backdrop-blur-md hover:bg-white/10 hover:border-red-500/50 shadow-2xl flex items-center justify-center gap-2.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-red-300 md:cursor-none"
             >
-              <Eye size={18} className="group-hover:scale-110 transition-transform" />
-              Voir CV
-            </a>
+              <Eye size={18} className="transition-transform duration-300 group-hover:scale-110" />
+              Voir mon CV
+            </motion.button>
           </motion.div>
         </motion.div>
         
       </div>
+
+      <AnimatePresence>
+        {cvOpen && (
+          <motion.div
+            className="fixed inset-0 z-[120] flex items-center justify-center bg-black/80 p-3 backdrop-blur-md sm:p-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.22 }}
+            onMouseDown={(event) => {
+              if (event.target === event.currentTarget) setCvOpen(false);
+            }}
+          >
+            <motion.section
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="cv-viewer-title"
+              initial={{ opacity: 0, y: 24, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 16, scale: 0.98 }}
+              transition={{ type: "spring", stiffness: 280, damping: 28 }}
+              className="flex max-h-[94vh] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-white/15 bg-zinc-950 shadow-[0_25px_100px_rgba(0,0,0,0.65)]"
+            >
+              <header className="flex shrink-0 items-center justify-between gap-4 border-b border-white/10 px-4 py-3 sm:px-6">
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-red-400">Curriculum vitae</p>
+                  <h2 id="cv-viewer-title" className="mt-1 text-base font-semibold text-white sm:text-lg">Soufiane Aqli</h2>
+                </div>
+                <div className="flex items-center gap-2">
+                  <a
+                    href="/cv-image.png"
+                    download="CV-Soufiane-Aqli.png"
+                    className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:px-4 sm:text-sm"
+                  >
+                    <Download size={16} />
+                    <span className="hidden sm:inline">Télécharger</span>
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => setCvOpen(false)}
+                    aria-label="Fermer le CV"
+                    className="rounded-lg border border-white/10 p-2 text-gray-300 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+              </header>
+              <div className="min-h-0 flex-1 overflow-auto bg-zinc-900/70 p-3 sm:p-6">
+                <img
+                  src="/cv-image.png"
+                  alt="CV de Soufiane Aqli"
+                  className="mx-auto h-auto w-full max-w-[583px] rounded-sm bg-white shadow-2xl"
+                />
+              </div>
+            </motion.section>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

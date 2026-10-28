@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ExternalLink, X, Check } from "lucide-react";
-import Tilt from "react-parallax-tilt";
 import AnimatedTitle from "@/components/ui/AnimatedTitle";
+import { CircularGallery, type GalleryItem } from "@/components/ui/circular-gallery";
 
 // Basic Github SVG
 const GithubIcon = () => (
@@ -171,15 +171,7 @@ const projects: Project[] = [
   },
 ];
 
-const categories = [
-  { id: "all", name: "Tous", icon: "🌟" },
-  { id: "fullstack", name: "Full-Stack", icon: "🚀" },
-  { id: "frontend", name: "Front-End", icon: "🎨" },
-  { id: "backend", name: "Back-End", icon: "⚙️" },
-];
-
 export default function Projects() {
-  const [filter, setFilter] = useState("all");
   const [selected, setSelected] = useState<Project | null>(null);
 
   useEffect(() => {
@@ -195,14 +187,27 @@ export default function Projects() {
     };
   }, [selected]);
 
-  const filteredProjects = filter === "all"
-    ? projects
-    : projects.filter(p => p.category === filter);
-
   const hasLink = (href: string) => href && href !== "#";
+  const galleryItems: GalleryItem[] = projects.map((project) => ({
+    common: project.title,
+    binomial: project.technologies.slice(0, 3).join(" · "),
+    photo: {
+      url: [
+        "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=900&q=85",
+        "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=900&q=85",
+        "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=900&q=85",
+        "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&w=900&q=85",
+        "https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=900&q=85",
+        "https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=900&q=85",
+        "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=900&q=85",
+      ][project.id - 1],
+      text: project.description,
+      by: "Unsplash",
+    },
+  }));
 
   return (
-    <section id="projects" className="py-24 relative z-10 px-8 bg-gradient-to-t from-black via-black/95 to-black">
+    <section id="projects" className="py-24 relative z-10 px-8 bg-transparent">
       <div className="max-w-7xl mx-auto">
 
         <div className="text-center mb-16">
@@ -221,103 +226,19 @@ export default function Projects() {
             Une sélection de mes travaux récents, démontrant mon expertise à travers différentes architectures.
           </motion.p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.4 }}
-            className="flex flex-wrap justify-center gap-4 mb-16"
-          >
-            {categories.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => setFilter(cat.id)}
-                className={`flex items-center gap-2 px-6 py-3 md:cursor-none rounded-full font-medium transition-all duration-300 ${filter === cat.id
-                    ? "bg-red-600 text-white shadow-lg shadow-red-500/30 scale-105"
-                    : "bg-white/5 text-gray-400 hover:text-white hover:bg-white/10 border border-white/10"
-                  }`}
-              >
-                <span>{cat.icon}</span>
-                {cat.name}
-              </button>
-            ))}
-          </motion.div>
         </div>
 
-        <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <AnimatePresence>
-            {filteredProjects.map((project, index) => (
-              <motion.div
-                key={project.id}
-                layout
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.5, delay: index * 0.1, type: "spring" }}
-                className="h-full block cursor-pointer md:cursor-none"
-                onClick={() => setSelected(project)}
-              >
-                <Tilt
-                  tiltMaxAngleX={5}
-                  tiltMaxAngleY={5}
-                  glareEnable={true}
-                  glareMaxOpacity={0.15}
-                  glareColor="#ffffff"
-                  glarePosition="all"
-                  scale={1.02}
-                  transitionSpeed={1000}
-                  className="h-full group bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 hover:border-red-500/50 overflow-hidden relative shadow-2xl flex flex-col"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-                  <div className="p-8 pb-0 flex justify-between items-start">
-                    <div className="text-6xl group-hover:scale-110 transition-transform duration-500 ease-out">{project.image}</div>
-                    <span className="text-xs font-semibold px-3 py-1 rounded-full bg-green-500/20 text-green-400 border border-green-500/20">
-                      {project.status}
-                    </span>
-                  </div>
-
-                  <div className="p-8 flex-1 flex flex-col">
-                    <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-red-400 transition-colors">
-                      {project.title}
-                    </h3>
-                    <p className="text-gray-400 text-sm mb-6 line-clamp-3">
-                      {project.description}
-                    </p>
-
-                    <div className="flex flex-wrap gap-2 mb-6 mt-auto">
-                      {project.technologies.map(tech => (
-                        <span key={tech} className="text-xs px-3 py-1 bg-white/5 border border-white/10 rounded-full text-gray-300 group-hover:border-red-500/30 transition-colors">
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
-
-                    <div className="flex items-center justify-between gap-3 pt-4 border-t border-white/10">
-                      <div className="flex items-center gap-2 text-red-400 text-sm font-medium">
-                        Voir le détail
-                        <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
-                      </div>
-                      {hasLink(project.demo) && (
-                        <a
-                          href={project.demo}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={(e) => e.stopPropagation()}
-                          className="inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-full bg-red-600 text-white hover:bg-red-500 shadow-lg shadow-red-500/30 transition-all duration-300 md:cursor-none"
-                        >
-                          <ExternalLink size={13} />
-                          Visiter le site
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </Tilt>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </motion.div>
+        <div className="relative h-[520px] overflow-hidden sm:h-[600px]">
+          <CircularGallery
+            items={galleryItems}
+            radius={360}
+            autoRotateSpeed={0.08}
+            onItemClick={(_, index) => setSelected(projects[index])}
+          />
+        </div>
+        <p className="mt-3 text-center text-xs text-gray-500">
+          Faites glisser pour tourner la galerie · Cliquez sur une carte pour en savoir plus
+        </p>
 
       </div>
 
