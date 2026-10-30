@@ -3,10 +3,10 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Eye, MessageCircle, Download, X } from "lucide-react";
-import Image from "next/image";
 import Tilt from "react-parallax-tilt";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import EyeTrackingPortrait from "@/components/EyeTrackingPortrait";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -229,15 +229,8 @@ export default function Hero() {
             {/* Main Picture Frame */}
             <div className="relative w-full h-full rounded-[3rem] md:rounded-full overflow-hidden border-4 border-red-500/30 p-4 bg-gradient-to-b from-red-500/10 to-transparent group shadow-[0_20px_50px_rgba(239,68,68,0.2)] backdrop-blur-sm">
               <div className="w-full h-full rounded-[2.5rem] md:rounded-full overflow-hidden relative">
-                <Image 
-                  src="/profile.jpeg" 
-                  alt="Soufiane Aqli" 
-                  fill
-                  style={{ objectFit: 'cover' }}
-                  className="group-hover:scale-110 transition-transform duration-1000 ease-out"
-                  priority
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
+                <EyeTrackingPortrait className="w-full h-full" maxWidth={420} />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60 pointer-events-none" />
               </div>
 
               {/* Floating badges / Micro-animations */}
